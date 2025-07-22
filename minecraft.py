@@ -77,13 +77,20 @@ def get_download_url(jar_type, version):
     return download_url
 
 
-def create_version_folder(save_path, jar_type, version):
-    directory_name = f"{save_path}/{jar_type}-{version}"
+def create_version_folder(save_path):
+    directory_name = f"{save_path}"
 
     if not os.path.exists(directory_name):
         os.makedirs(directory_name)
 
     return directory_name
+
+
+def chmod_all_files_in_dir(directory, mode):
+    for root, dirs, files in os.walk(directory):
+        for filename in files:
+            file_path = os.path.join(root, filename)
+            os.chmod(file_path, mode)
 
 
 def main():
@@ -95,7 +102,7 @@ def main():
 
     jar_type = arguments[1]
     version = arguments[2]
-    save_path = arguments[3] if len(arguments) == 4 else "./"
+    save_path = f"./{arguments[3]}" if len(arguments) == 4 else f"./{jar_type}-{version}"
 
     download_url = get_download_url(jar_type, version)
     jar_name = "server.jar"
@@ -103,9 +110,10 @@ def main():
     if download_url is None:
         return
 
-    save_path = create_version_folder(save_path, jar_type, version)
+    save_path = create_version_folder(save_path)
     set_eula_and_run(save_path, jar_name)
     download_file(download_url, save_path)
+    chmod_all_files_in_dir(save_path, 0o744)
 
     return
 
