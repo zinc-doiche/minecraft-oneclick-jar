@@ -2,16 +2,16 @@ import sys
 import platform
 from file_util import *
 
-PAPER_URL = "https://api.papermc.io/v2/projects/paper"
+PAPER_URL = "https://fill.papermc.io/v3/projects/paper"
 VANILLA_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json"
 
 JVM_ARGS = "-Xmx2G -Xms1G"
 
-def extract_paper_download_url(json_data, version):
-    builds = json_data['builds'][-1]
-    last_build = builds['build']
+def extract_paper_download_url(json_data):
+    last_build = json_data['builds'][0]
+    last_build = last_build['downloads']
 
-    return f"{PAPER_URL}/versions/{version}/builds/{last_build}/downloads/paper-{version}-{last_build}.jar"
+    return last_build['server:default']['url']
 
 
 def extract_vanilla_download_url(json_data, version):
@@ -69,7 +69,7 @@ def get_download_url(jar_type, version):
         return None
 
     if jar_type == "paper":
-        download_url = extract_paper_download_url(json_data, version)
+        download_url = extract_paper_download_url(json_data)
 
     elif jar_type == "vanilla":
         download_url = extract_vanilla_download_url(json_data, version)
