@@ -8,7 +8,7 @@ VANILLA_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json"
 JVM_ARGS = "-Xmx2G -Xms1G"
 
 def extract_paper_download_url(json_data):
-    last_build = json_data['builds'][0]
+    last_build = json_data[0]
     last_build = last_build['downloads']
 
     return last_build['server:default']['url']
